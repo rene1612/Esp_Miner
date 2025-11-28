@@ -7,7 +7,7 @@
 
 #include "global_state.h"
 
-#define TPS546_I2CADDR         0x24  // TPS546 i2c address
+#define TPS546_I2CADDR         0x11  // TPS546 i2c address
 #define TPS546_I2CADDR_ALERT   0x0C  // TPS546 SMBus Alert address
 #define TPS546_MANUFACTURER_ID 0xFE  // Manufacturer ID
 #define TPS546_REVISION        0xFF  // Chip revision

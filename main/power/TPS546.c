@@ -28,6 +28,7 @@ static const char *TAG = "TPS546";
 
 static uint8_t DEVICE_ID_TPS546D24A[] = {0x54, 0x49, 0x54, 0x6D, 0x24, 0x41};
 static uint8_t DEVICE_ID_TPS546D24S[] = {0x54, 0x49, 0x54, 0x6D, 0x24, 0x62};
+static uint8_t DEVICE_ID_TPS546E25R[] = {0x54, 0x49, 0x54, 0x6E, 0x25, 0x00};
 // static uint8_t DEVICE_ID_TPS546B24A[] = {0x54, 0x49, 0x54, 0x6B, 0x24, 0x41};
 // static uint8_t DEVICE_ID_TPS546B24S[] = {0x54, 0x49, 0x54, 0x6B, 0x24, 0x62};
 
@@ -355,7 +356,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config)
         if (err == ESP_OK) {
             if (memcmp(id, DEVICE_ID_TPS546D24A, 6) == 0
              || memcmp(id, DEVICE_ID_TPS546D24S, 6) == 0
-            //  || memcmp(id, DEVICE_ID_TPS546B24A, 6) == 0
+             || memcmp(id, DEVICE_ID_TPS546E25R, 6) == 0
             //  || memcmp(id, DEVICE_ID_TPS546B24S, 6) == 0
                 ) {
                 id_matched = true;  // got a real response
