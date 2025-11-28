@@ -1,4 +1,5 @@
 #include "TPS546.h"
+#include "TPS546E25.h"
 #include "INA260.h"
 #include "DS4432U.h"
 
@@ -8,6 +9,9 @@ float Power_get_current(GlobalState * GLOBAL_STATE)
 {
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         return TPS546_get_iout() * 1000.0;
+    }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
+        return TPS546E25_get_iout() * 1000.0;
     }
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         return INA260_read_current();
@@ -28,6 +32,15 @@ float Power_get_power(GlobalState * GLOBAL_STATE)
         // The power reading from the TPS546 is only it's output power. So the rest of the Bitaxe power is not accounted for.
         power += GLOBAL_STATE->DEVICE_CONFIG.family.power_offset; // Add offset for the rest of the Bitaxe power. TODO: this better.
     }
+
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
+        current = TPS546E25_get_iout() * 1000.0;
+        // calculate regulator power (in milliwatts)
+        power = TPS546E25_get_vout() * current / 1000.0;
+        // The power reading from the TPS546E25 is only it's output power. So the rest of the Bitaxe power is not accounted for.
+        power += GLOBAL_STATE->DEVICE_CONFIG.family.power_offset; // Add offset for the rest of the Bitaxe power. TODO: this better.
+    }
+
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         power = INA260_read_power() / 1000.0;
     }    
@@ -40,6 +53,9 @@ float Power_get_input_voltage(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         return TPS546_get_vin() * 1000.0;
     }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
+        return TPS546E25_get_vin() * 1000.0;
+    }
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         return INA260_read_voltage();
     }
@@ -47,10 +63,29 @@ float Power_get_input_voltage(GlobalState * GLOBAL_STATE)
     return 0.0;
 }
 
+float Power_get_output_voltage(GlobalState * GLOBAL_STATE)
+{
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
+        return TPS546_get_vout() * 1000.0;
+    }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
+        return TPS546E25_get_vout() * 1000.0;
+    }
+    if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
+        return INA260_read_voltage();
+    }
+    
+    return 0.0;
+}
+
+
 float Power_get_vreg_temp(GlobalState * GLOBAL_STATE)
 {
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         return TPS546_get_temperature();
+    }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
+        return TPS546E25_get_temperature();
     }
 
     return 0.0;

@@ -55,7 +55,11 @@
     "cmath": "c",
     "utils.h": "c",
     "task.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "xlocmon": "c",
+    "xlocnum": "c",
+    "xtr1common": "c",
+    "xutility": "cpp"
   },
   "editor.formatOnSave": false,
   "cSpell.words": [

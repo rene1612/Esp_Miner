@@ -109,7 +109,14 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         pid_setPoint = (double)nvs_config_get_u16(NVS_CONFIG_TEMP_TARGET);
 
         power_management->voltage = Power_get_input_voltage(GLOBAL_STATE);
-        power_management->power = Power_get_power(GLOBAL_STATE);
+        power_management->out_current = Power_get_current(GLOBAL_STATE);
+        power_management->out_voltage = Power_get_output_voltage(GLOBAL_STATE);
+
+        float power = (power_management->out_voltage / 1000.0) * (power_management->out_current / 1000.0);
+        // The power reading from the TPS546 is only it's output power. So the rest of the Bitaxe power is not accounted for.
+        power += GLOBAL_STATE->DEVICE_CONFIG.family.power_offset; // Add offset for the rest of the Bitaxe power. TODO: this better.
+        power_management->power = power;
+        //power_management->power = Power_get_power(GLOBAL_STATE);
 
         power_management->fan_rpm = Thermal_get_fan_speed(&GLOBAL_STATE->DEVICE_CONFIG);
         power_management->fan2_rpm = Thermal_get_fan2_speed(&GLOBAL_STATE->DEVICE_CONFIG);
@@ -117,6 +124,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         power_management->chip_temp2_avg = Thermal_get_chip_temp2(GLOBAL_STATE);
 
         power_management->vr_temp = Power_get_vreg_temp(GLOBAL_STATE);
+
         bool asic_overheat = 
             power_management->chip_temp_avg > THROTTLE_TEMP
             || power_management->chip_temp2_avg > THROTTLE_TEMP;

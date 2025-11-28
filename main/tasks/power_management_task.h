@@ -13,7 +13,8 @@ typedef struct
     float frequency_value;
     float expected_hashrate;
     float power;
-    float current;
+    float out_current;
+    float out_voltage;
 } PowerManagementModule;
 
 void POWER_MANAGEMENT_init_frequency(void * pvParameters);

@@ -82,18 +82,21 @@ void app_main(void)
     start_rest_server((void *) &GLOBAL_STATE);
 
     // Initialize BAP interface
+/*    
     esp_err_t bap_ret = BAP_init(&GLOBAL_STATE);
     if (bap_ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize BAP interface: %d", bap_ret);
         // Continue anyway, as BAP is not critical for core functionality
     }
-
+*/
     while (!GLOBAL_STATE.SYSTEM_MODULE.is_connected) {
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-
+/*
     queue_init(&GLOBAL_STATE.stratum_queue);
     queue_init(&GLOBAL_STATE.ASIC_jobs_queue);
+
+
 
     if (asic_initialize(&GLOBAL_STATE, ASIC_INIT_COLD_BOOT, 0) == 0) {
         return;
@@ -105,6 +108,7 @@ void app_main(void)
     if (xTaskCreate(create_jobs_task, "stratum miner", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating stratum miner task");
     }
+
     if (xTaskCreate(ASIC_task, "asic", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating asic task");
     }
@@ -117,4 +121,5 @@ void app_main(void)
     if (xTaskCreateWithCaps(statistics_task, "statistics", 8192, (void *) &GLOBAL_STATE, 3, NULL, MALLOC_CAP_SPIRAM) != pdPASS) {
         ESP_LOGE(TAG, "Error creating statistics task");
     }
+*/
 }

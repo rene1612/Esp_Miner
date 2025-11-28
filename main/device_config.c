@@ -69,6 +69,7 @@ esp_err_t device_config_init(void * pvParameters)
     GLOBAL_STATE->DEVICE_CONFIG.DS4432U = nvs_config_get_bool(NVS_CONFIG_DS4432U);
     GLOBAL_STATE->DEVICE_CONFIG.INA260 = nvs_config_get_bool(NVS_CONFIG_INA260);
     GLOBAL_STATE->DEVICE_CONFIG.TPS546 = nvs_config_get_bool(NVS_CONFIG_TPS546);
+    GLOBAL_STATE->DEVICE_CONFIG.TPS546E25 = nvs_config_get_bool(NVS_CONFIG_TPS546E25);
     GLOBAL_STATE->DEVICE_CONFIG.TMP1075 = nvs_config_get_bool(NVS_CONFIG_TMP1075);
 
     // test values
