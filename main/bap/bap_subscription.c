@@ -181,7 +181,7 @@ void BAP_send_subscription_update(GlobalState *state) {
                     case BAP_PARAM_CURRENT:
                         {
                             char current_str[32];
-                            snprintf(current_str, sizeof(current_str), "%.2f", state->POWER_MANAGEMENT_MODULE.current);
+                            snprintf(current_str, sizeof(current_str), "%.2f", state->POWER_MANAGEMENT_MODULE.out_current);
                             BAP_send_message_with_queue(BAP_CMD_RES, "current", current_str);
                         }
                         break;
