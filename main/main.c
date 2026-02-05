@@ -3,7 +3,6 @@
 #include "esp_psram.h"
 
 #include "asic_result_task.h"
-#include "asic_task.h"
 #include "create_jobs_task.h"
 #include "hashrate_monitor_task.h"
 #include "statistics_task.h"
@@ -57,6 +56,12 @@ void app_main(void)
         return;
     }
 
+    // Ensure SSID is initialized before any screen/self-test uses it.
+    GLOBAL_STATE.SYSTEM_MODULE.ssid = nvs_config_get_string(NVS_CONFIG_WIFI_SSID);
+    if (GLOBAL_STATE.SYSTEM_MODULE.ssid == NULL) {
+        GLOBAL_STATE.SYSTEM_MODULE.ssid = strdup("");
+    }
+
     if (device_config_init(&GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to init device config");
         return;
@@ -69,10 +74,7 @@ void app_main(void)
     // init AP and connect to wifi
     wifi_init(&GLOBAL_STATE);
 
-    if (SYSTEM_init_peripherals(&GLOBAL_STATE) != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to init peripherals");
-        return;
-    }
+    SYSTEM_init_peripherals(&GLOBAL_STATE);
 
     if (xTaskCreate(POWER_MANAGEMENT_task, "power management", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating power management task");
@@ -80,6 +82,9 @@ void app_main(void)
 
     //start the API for AxeOS
     start_rest_server((void *) &GLOBAL_STATE);
+
+    // After mounting SPIFFS
+    SYSTEM_init_versions(&GLOBAL_STATE);
 
     // Initialize BAP interface
 /*
@@ -94,9 +99,6 @@ void app_main(void)
     }
 
     queue_init(&GLOBAL_STATE.stratum_queue);
-    queue_init(&GLOBAL_STATE.ASIC_jobs_queue);
-
-
 
     if (asic_initialize(&GLOBAL_STATE, ASIC_INIT_COLD_BOOT, 0) == 0) {
         return;
@@ -105,12 +107,8 @@ void app_main(void)
     if (xTaskCreate(stratum_task, "stratum admin", 8192, (void *) &GLOBAL_STATE, 5, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating stratum admin task");
     }
-    if (xTaskCreate(create_jobs_task, "stratum miner", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
+    if (xTaskCreate(create_jobs_task, "stratum miner", 8192, (void *) &GLOBAL_STATE, 20, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating stratum miner task");
-    }
-
-    if (xTaskCreate(ASIC_task, "asic", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
-        ESP_LOGE(TAG, "Error creating asic task");
     }
     if (xTaskCreate(ASIC_result_task, "asic result", 8192, (void *) &GLOBAL_STATE, 15, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating asic result task");
