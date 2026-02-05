@@ -73,5 +73,6 @@
     "IDF_CCACHE_ENABLE": "1",
     "ESP_ROM_ELF_DIR": "C:\\Users\\res\\.espressif\\tools\\esp-rom-elfs\\20241011/",
     "IDF_TARGET": "esp32s3"
-  }
+  },
+  "idf.currentSetup": "C:\\Users\\res\\esp\\esp-idf"
 }
