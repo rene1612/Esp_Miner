@@ -109,10 +109,10 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         pid_setPoint = (double)nvs_config_get_u16(NVS_CONFIG_TEMP_TARGET);
 
         power_management->voltage = Power_get_input_voltage(GLOBAL_STATE);
-        power_management->out_current = Power_get_current(GLOBAL_STATE);
-        power_management->out_voltage = Power_get_output_voltage(GLOBAL_STATE);
+        power_management->current = Power_get_current(GLOBAL_STATE);
+        power_management->core_voltage = Power_get_output_voltage(GLOBAL_STATE);
 
-        float power = (power_management->out_voltage / 1000.0) * (power_management->out_current / 1000.0);
+        float power = (power_management->core_voltage / 1000.0) * (power_management->current / 1000.0);
         // The power reading from the TPS546 is only it's output power. So the rest of the Bitaxe power is not accounted for.
         power += GLOBAL_STATE->DEVICE_CONFIG.family.power_offset; // Add offset for the rest of the Bitaxe power. TODO: this better.
         power_management->power = power;

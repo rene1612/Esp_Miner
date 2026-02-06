@@ -7,6 +7,7 @@
 #include "TPS546.h"
 #include "TPS546E25.h"
 #include "INA260.h"
+#include "adc.h"
 #include "driver/gpio.h"
 #include "vcore.h"
 
@@ -107,21 +108,14 @@ esp_err_t VCORE_init(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.DS4432U) {
         ESP_RETURN_ON_ERROR(DS4432U_init(), TAG, "DS4432 init failed!");
     }
+
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         ESP_RETURN_ON_ERROR(INA260_init(), TAG, "INA260 init failed!");
     }
+    
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
-        switch (GLOBAL_STATE->DEVICE_CONFIG.family.id) {
-            case GAMMA_TURBO:
-                ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_GAMMATURBO), TAG, "TPS546 init failed!");
-                break;
-            case HEX:
-                ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_HEX), TAG, "TPS546 init failed!");
-                break;
-            default:
-                ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_DEFAULT), TAG, "TPS546 init failed!");
-                break;
-        }
+        TPS546_CONFIG tps_config = get_tps546_config(&GLOBAL_STATE->DEVICE_CONFIG.family);
+        ESP_RETURN_ON_ERROR(TPS546_init(tps_config), TAG, "TPS546 init failed!");
     }
 
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546E25) {
